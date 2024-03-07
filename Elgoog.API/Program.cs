@@ -1,4 +1,8 @@
+using Elgoog.API.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddElgoogContext(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,5 +1,7 @@
 using Elgoog.DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Elgoog.API.Extensions;
 

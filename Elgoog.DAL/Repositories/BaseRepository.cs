@@ -1,20 +1,19 @@
 using System.Linq.Expressions;
-using Elgoog.DAL;
 using Elgoog.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace Briskly.DAL.Repositories;
+namespace Elgoog.DAL.Repositories;
 
 public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TModel : class
 {
     private readonly ElgoogContext _context;
-    private readonly IConfigurationProvider _configurationProvider;
+    private readonly IConfiguration _configuration;
 
-    public BaseRepository(ElgoogContext context, IConfigurationProvider configurationProvider)
+    public BaseRepository(ElgoogContext context, IConfiguration configuration)
     {
         _context = context;
-        _configurationProvider = configurationProvider;
+        _configuration = configuration;
     }
 
     public Task<TModel> GetAsync(Expression<Func<TModel, bool>> expression = null,
@@ -64,8 +63,8 @@ public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TMo
     {
         _context.Remove(model);
     }
-    
-    private IQueryable<TModel> PrepareQueryable(Expression<Func<TModel, bool>> expression = null,
+
+    public IQueryable<TModel> PrepareQueryable(Expression<Func<TModel, bool>> expression = null,
         Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
         int? page = null,
         int? pageSize = null,

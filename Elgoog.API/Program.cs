@@ -1,11 +1,16 @@
 using Elgoog.API.Extensions;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<HtmlDocument>();
 builder.Services.AddElgoogContext(builder.Configuration);
+builder.Services.AddRepositories();
+builder.Services.AddScrappers();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

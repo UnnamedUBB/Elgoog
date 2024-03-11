@@ -1,4 +1,8 @@
+using Elgoog.API.Services;
+using Elgoog.API.Services.Interfaces;
 using Elgoog.DAL;
+using Elgoog.DAL.Repositories;
+using Elgoog.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +23,20 @@ public static class ServiceCollectionExtensions
             });
         });
 
+        return collection;
+    }
+
+    public static IServiceCollection AddRepositories(this IServiceCollection collection)
+    {
+        collection.AddScoped<IItemRepository, ItemRepository>();
+        
+        return collection;
+    }
+
+    public static IServiceCollection AddScrappers(this IServiceCollection collection)
+    {
+        collection.AddScoped<ICeneoScrapper, CeneoScrapper>();
+        
         return collection;
     }
 }

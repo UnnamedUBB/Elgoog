@@ -8,17 +8,17 @@ namespace Elgoog.API.Controllers;
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductsService _productsService;
+    private readonly IProductService _productService;
 
-    public ProductsController(IProductsService productsService)
+    public ProductsController(IProductService productService)
     {
-        _productsService = productsService;
+        _productService = productService;
     }
 
     [HttpGet]
     public async Task<OkObjectResult> GetProducts([FromQuery] ProductsRequestDto query)
     {
-        var products = await _productsService.GetProductsAsync(query.Page , query.PageSize, query.Filter);
+        var products = await _productService.GetProductsAsync(query.Page , query.PageSize, query.Filter);
         return Ok(products);
     }
 }

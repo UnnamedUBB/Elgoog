@@ -7,12 +7,12 @@ using Quartz.Util;
 
 namespace Elgoog.API.Services;
 
-public class ProductsService : IProductsService
+public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
     private readonly ICeneoScrapper _ceneoScrapper;
 
-    public ProductsService(IProductRepository productRepository, ICeneoScrapper ceneoScrapper)
+    public ProductService(IProductRepository productRepository, ICeneoScrapper ceneoScrapper)
     {
         _productRepository = productRepository;
         _ceneoScrapper = ceneoScrapper;

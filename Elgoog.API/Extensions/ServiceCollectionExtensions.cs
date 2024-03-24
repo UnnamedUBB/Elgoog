@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection collection)
     {
-        collection.AddScoped<IProductsService, ProductsService>();
+        collection.AddScoped<IProductService, ProductService>();
         collection.AddScoped<ICeneoScrapper, CeneoScrapper>();
 
         return collection;

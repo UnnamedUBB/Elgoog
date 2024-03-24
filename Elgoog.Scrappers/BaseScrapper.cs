@@ -19,6 +19,8 @@ public abstract class BaseScrapper : IBaseScrapper
                 throw new Exception("Nieprawdiłowy base url");
             }
 
+            Console.WriteLine(BaseUrl + url);
+            
             var web = new HtmlWeb();
             return web.Load(BaseUrl + url);
         }

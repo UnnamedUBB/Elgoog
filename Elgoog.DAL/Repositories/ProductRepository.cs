@@ -26,7 +26,6 @@ public class ProductRepository : BaseRepository<ProductModel>, IProductRepositor
             if (model == null) continue;
             
             Update(updateableProduct);
-            updateableProduct.Id = model.Id;
             updateableProduct.Name = model.Name;
             updateableProduct.Price = model.Price;
             updateableProduct.Image = model.Image;

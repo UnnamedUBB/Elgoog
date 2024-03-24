@@ -36,8 +36,8 @@ public class ScrapperJob : IJob
                     Id = entity.Id,
                     Name = entity.Name,
                     Price = entity.Price,
-                    Image = entity.Img,
-                    Reference = entity.Link,
+                    Image = entity.Image,
+                    Reference = entity.Reference,
                 })
                 .ToList();
 

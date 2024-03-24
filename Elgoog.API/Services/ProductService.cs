@@ -31,16 +31,16 @@ public class ProductService : IProductService
                 Id = x.Id,
                 Name = x.Name,
                 Price = x.Price,
-                Image = x.Img,
-                Reference = x.Link,
+                Image = x.Image,
+                Reference = x.Reference,
                 DateModifiedUtc = DateTime.UtcNow
             }).ToList();
             
             await _productRepository.AddOrUpdateAsync(preparedScrappedData);
             await _productRepository.SaveAsync();
 
-            result.Data = preparedScrappedData;
-            result.TotalCount = preparedScrappedData.Count();
+            result.Data = preparedScrappedData[..Math.Min(preparedScrappedData.Count(), 19)];
+            result.TotalCount = Math.Min(preparedScrappedData.Count(), 20);
         }
 
         return result;

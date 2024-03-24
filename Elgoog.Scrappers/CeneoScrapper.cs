@@ -15,45 +15,55 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
         if (document == null) return [];
 
         var productNodes = document.DocumentNode.SelectNodes("//div[contains(@class,'cat-prod-row')]");
+        if (productNodes == null) return [];
+
         var products = new List<ProductDto>();
-        
         Parallel.ForEach(productNodes, async (node) =>
         {
-            if (!int.TryParse(node.GetAttributeValue("data-pid", ""), out var id))
+            var id = node.GetAttributeValue("data-pid", null);
+            var name = GetName(node);
+            var price = GetPrice(node);
+            var link = await GetReference(node).ConfigureAwait(false);
+            var image = GetImage(node);
+
+            if (id == null || name == null || price == null || link == null || image == null)
                 return;
-            
+
             products.Add(new ProductDto
-            { 
+            {
                 Id = id,
-                Name = GetName(node),
-                Price = GetPrice(node),
-                Link = await GetReference(node).ConfigureAwait(false) ?? "",
-                Img = GetImage(node)
+                Name = name,
+                Price = (decimal) price,
+                Reference = link,
+                Image = image
             });
         });
 
-        return products;
+        return products.DistinctBy(x => x.Id).ToList();
     }
 
-    private string GetName(HtmlNode node)
+    private string? GetName(HtmlNode node)
     {
-        return node.SelectSingleNode(".//strong[@class='cat-prod-row__name']").InnerText.Trim();
+        return node.SelectSingleNode(".//strong[@class='cat-prod-row__name']")?.InnerText.Trim();
     }
 
-    private decimal GetPrice(HtmlNode node)
+    private decimal? GetPrice(HtmlNode node)
     {
-        var price = node.SelectSingleNode(".//span[@class='price']").InnerText.Trim();
+        var priceNode = node.SelectSingleNode(".//span[@class='price']");
+        if (priceNode == null) return null;
+
+        var price = priceNode.InnerText.Trim();
         var preparedPrice = Regex.Replace(price, @"\s+", "").Replace(',', '.');
 
         if (decimal.TryParse(preparedPrice, out var parsed))
             return parsed;
 
-        return 0;
+        return null;
     }
 
-    private string GetImage(HtmlNode node)
+    private string? GetImage(HtmlNode node)
     {
-        var img = node.SelectSingleNode(".//div[@class='cat-prod-row__foto']//img")
+        var img = node.SelectSingleNode(".//div[@class='cat-prod-row__foto']//img")?
             .GetAttributeValue("data-original", "").Trim();
         if (img == "")
         {
@@ -65,7 +75,10 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
 
     private async Task<string?> GetReference(HtmlNode node)
     {
-        var link = node.SelectSingleNode(".//div[@class='btn-compare-outer']//a").GetAttributeValue("href", "").Trim();
+        var linkNode = node.SelectSingleNode(".//div[@class='btn-compare-outer']//a");
+        if (linkNode == null) return null;
+        
+        var link = linkNode.GetAttributeValue("href", "").Trim();
         if (!Regex.IsMatch(link, @"^\/\d+$"))
         {
             return link;

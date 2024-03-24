@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elgoog.DAL.Migrations
 {
     [DbContext(typeof(ElgoogContext))]
-    [Migration("20240324180311_Initial")]
+    [Migration("20240324184101_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,11 +27,8 @@ namespace Elgoog.DAL.Migrations
 
             modelBuilder.Entity("Elgoog.DAL.Models.ProductModel", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateModifiedUtc")
                         .HasColumnType("datetime(6)");

@@ -28,10 +28,13 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
 
             if (id == null || name == null || price == null || link == null || image == null)
                 return;
+            
+            if (!int.TryParse(id, out var parsedId))
+                return;
 
             products.Add(new ProductDto
             {
-                Id = id,
+                Id = parsedId,
                 Name = name,
                 Price = (decimal) price,
                 Reference = link,

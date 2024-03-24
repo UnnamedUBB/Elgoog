@@ -4,6 +4,7 @@ using Elgoog.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elgoog.DAL.Migrations
 {
     [DbContext(typeof(ElgoogContext))]
-    partial class ElgoogContextModelSnapshot : ModelSnapshot
+    [Migration("20240324221510_CHANGE_ID_TO_INT_IN_PRODUCTS")]
+    partial class CHANGE_ID_TO_INT_IN_PRODUCTS
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

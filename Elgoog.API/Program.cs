@@ -10,7 +10,8 @@ builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<HtmlDocument>();
 builder.Services.AddElgoogContext(builder.Configuration);
 builder.Services.AddRepositories();
-builder.Services.AddScrappers();
+builder.Services.AddServices();
+builder.Services.AddJobs();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

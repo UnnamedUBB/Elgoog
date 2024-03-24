@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Elgoog.DAL.Interfaces;
 using Elgoog.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,27 +17,40 @@ public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TMo
         _configuration = configuration;
     }
 
-    public Task<TModel> GetAsync(Expression<Func<TModel, bool>> expression = null,
-        Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
+    public Task<TModel?> GetAsync(Expression<Func<TModel, bool>> expression = null,
+        Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
         params Expression<Func<TModel, object>>[] includes)
     {
-        return PrepareQueryable(expression, orderBy, null, null, includes).FirstOrDefaultAsync();
+        return PrepareQueryable(expression, orderBy, includes).FirstOrDefaultAsync();
     }
 
     public Task<List<TModel>> GetAllAsync(Expression<Func<TModel, bool>> expression = null,
-        Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
+        Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
         params Expression<Func<TModel, object>>[] includes)
     {
-        return PrepareQueryable(expression, orderBy, null, null, includes).ToListAsync();
+        return PrepareQueryable(expression, orderBy, includes).ToListAsync();
     }
 
-    public Task<List<TModel>> GetAllWithPaginationAsync(Expression<Func<TModel, bool>> expression = null,
-        Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
+    public async Task<PageableList<TModel>> GetAllWithPaginationAsync(Expression<Func<TModel, bool>> expression = null,
+        Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
         int? page = null,
         int? pageSize = null,
         params Expression<Func<TModel, object>>[] includes)
     {
-        return PrepareQueryable(expression, orderBy, page, pageSize, includes).ToListAsync();
+        var query = PrepareQueryable(expression, orderBy,  includes);
+
+        var total = await query.CountAsync();
+        
+        if (page is not null && pageSize is not null)
+        {
+            query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
+        return new PageableList<TModel>
+        {
+            TotalCount = total,
+            Data = await query.ToListAsync()
+        };
     }
 
     public Task<bool> ExistsAsync(Expression<Func<TModel, bool>> expression)
@@ -64,10 +78,13 @@ public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TMo
         _context.Remove(model);
     }
 
+    public Task<int> SaveAsync()
+    {
+        return _context.SaveChangesAsync();
+    }
+
     public IQueryable<TModel> PrepareQueryable(Expression<Func<TModel, bool>> expression = null,
-        Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null,
-        int? page = null,
-        int? pageSize = null,
+        Func<IQueryable<TModel>, IOrderedQueryable<TModel>>? orderBy = null,
         params Expression<Func<TModel, object>>[] includes)
     {
         var baseQuery = _context.Set<TModel>()
@@ -85,11 +102,6 @@ public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TMo
         }
 
         baseQuery = includes.Aggregate(baseQuery, (curr, acc) => curr.Include(acc));
-
-        if (page is not null && pageSize is not null)
-        {
-            baseQuery = baseQuery.Skip(page.Value - 1 * pageSize.Value).Take(pageSize.Value);
-        }
 
         return baseQuery;
     }

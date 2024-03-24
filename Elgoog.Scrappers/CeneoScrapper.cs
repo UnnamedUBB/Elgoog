@@ -1,45 +1,36 @@
 using System.Text.RegularExpressions;
-using Elgoog.API.Services.Interfaces;
+using Elgoog.Scrappers.Dto;
+using Elgoog.Scrappers.Interfaces;
 using HtmlAgilityPack;
 
-namespace Elgoog.API.Services;
-
-public class Product
-{
-    public int Id { get; set; }
-    public string? Name { get; set; }
-    public string? Price { get; set; }
-    public string? Link { get; set; }
-    public string? Img { get; set; }
-}
+namespace Elgoog.Scrappers;
 
 public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
 {
     protected override string BaseUrl => "https://www.ceneo.pl/";
 
-    public CeneoScrapper(HttpClient httpClient) : base(httpClient)
+    public async Task<List<ProductDto>> GetProductsAsync(string filter, int page = 0)
     {
-    }
+        var document = await GetPageAsync($";szukaj-{filter};0020-30-0-0-{page}.htm").ConfigureAwait(false);
+        if (document == null) return [];
 
-    public async Task<List<Product>> GetProducts(string filter)
-    {
-        var html = await GetPageAsync($";szukaj-{filter}");
-        var document = new HtmlDocument();
-        document.LoadHtml(html);
-
-        var productNodes = document.DocumentNode.SelectNodes("//div[contains(@class,'cat-prod-row__body')]");
-        var products = new List<Product>();
+        var productNodes = document.DocumentNode.SelectNodes("//div[contains(@class,'cat-prod-row')]");
+        var products = new List<ProductDto>();
         
-        foreach (var node in productNodes)
+        Parallel.ForEach(productNodes, async (node) =>
         {
-            products.Add(new Product
-            {
+            if (!int.TryParse(node.GetAttributeValue("data-pid", ""), out var id))
+                return;
+            
+            products.Add(new ProductDto
+            { 
+                Id = id,
                 Name = GetName(node),
                 Price = GetPrice(node),
-                Link = await GetReference(node),
+                Link = await GetReference(node).ConfigureAwait(false) ?? "",
                 Img = GetImage(node)
-            });    
-        }
+            });
+        });
 
         return products;
     }
@@ -49,9 +40,15 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
         return node.SelectSingleNode(".//strong[@class='cat-prod-row__name']").InnerText.Trim();
     }
 
-    private string GetPrice(HtmlNode node)
+    private decimal GetPrice(HtmlNode node)
     {
-        return node.SelectSingleNode(".//span[@class='price']").InnerText.Trim();
+        var price = node.SelectSingleNode(".//span[@class='price']").InnerText.Trim();
+        var preparedPrice = Regex.Replace(price, @"\s+", "").Replace(',', '.');
+
+        if (decimal.TryParse(preparedPrice, out var parsed))
+            return parsed;
+
+        return 0;
     }
 
     private string GetImage(HtmlNode node)
@@ -74,9 +71,8 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
             return link;
         }
 
-        var html = await GetPageAsync(link[1..]);
-        var document = new HtmlDocument();
-        document.LoadHtml(html);
+        var document = await GetPageAsync(link[1..]).ConfigureAwait(false);
+        if (document == null) return null;
 
         var refNode =
             document.DocumentNode.SelectSingleNode("//a[@class='button button--primary button--flex go-to-shop']");

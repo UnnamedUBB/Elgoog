@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elgoog.API", "Elgoog.API\El
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elgoog.DAL", "Elgoog.DAL\Elgoog.DAL.csproj", "{02ABB71A-E952-40F0-8D8A-FD26F429D1F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elgoog.Scrappers", "Elgoog.Scrappers\Elgoog.Scrappers.csproj", "{22310814-E6EB-4200-9D6A-5F6ECF384F0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{02ABB71A-E952-40F0-8D8A-FD26F429D1F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02ABB71A-E952-40F0-8D8A-FD26F429D1F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02ABB71A-E952-40F0-8D8A-FD26F429D1F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22310814-E6EB-4200-9D6A-5F6ECF384F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22310814-E6EB-4200-9D6A-5F6ECF384F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22310814-E6EB-4200-9D6A-5F6ECF384F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22310814-E6EB-4200-9D6A-5F6ECF384F0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

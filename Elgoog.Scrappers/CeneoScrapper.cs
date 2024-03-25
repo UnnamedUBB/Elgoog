@@ -96,12 +96,7 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
         {
             img = node.SelectSingleNode(".//div[@class='cat-prod-row__foto']//img").GetAttributeValue("src", "");
         }
-
-        if (img != null)
-        {
-            img = "www.ceneo.pl" + img;
-        }
-
+        
         return img;
     }
 

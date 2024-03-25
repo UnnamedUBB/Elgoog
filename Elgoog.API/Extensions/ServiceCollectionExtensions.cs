@@ -49,8 +49,7 @@ public static class ServiceCollectionExtensions
             x.AddTrigger(t => t
                 .ForJob(ProductsJob.Key)
                 .WithIdentity("updateProductsTrigger")
-                .StartNow()
-                .WithSimpleSchedule(s => s.WithIntervalInSeconds(60).RepeatForever()));
+                .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(6, 0)));
         });
 
         collection.AddQuartzHostedService(x => { x.WaitForJobsToComplete = true; });

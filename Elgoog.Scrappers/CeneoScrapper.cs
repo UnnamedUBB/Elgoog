@@ -79,7 +79,7 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
         if (priceNode == null) return null;
 
         var price = priceNode.InnerText.Trim();
-        var preparedPrice = Regex.Replace(price, @"\s+", "").Replace(',', '.');
+        var preparedPrice = Regex.Replace(price, @"\s+", "").Replace(",", ".");
 
         if (decimal.TryParse(preparedPrice, out var parsed))
             return parsed;
@@ -91,9 +91,15 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
     {
         var img = node.SelectSingleNode(".//div[@class='cat-prod-row__foto']//img")?
             .GetAttributeValue("data-original", "").Trim();
+        
         if (img == "")
         {
             img = node.SelectSingleNode(".//div[@class='cat-prod-row__foto']//img").GetAttributeValue("src", "");
+        }
+
+        if (img != null)
+        {
+            img = "www.ceneo.pl" + img;
         }
 
         return img;

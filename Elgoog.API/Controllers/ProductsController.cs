@@ -18,7 +18,8 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<OkObjectResult> GetProducts([FromQuery] ProductsRequestDto query)
     {
-        var products = await _productService.GetProductsAsync(query.Page , query.PageSize, query.Filter);
+        var products = await _productService.GetProductsAsync(query.Page, query.PageSize, query.MinPrice,
+            query.MaxPrice, query.SortType, query.Filter);
         return Ok(products);
     }
 }

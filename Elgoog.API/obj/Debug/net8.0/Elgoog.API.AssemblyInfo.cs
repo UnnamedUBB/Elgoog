@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Elgoog.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9064fef714f20805fcc0ed601f944ea813f99bf7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7cc2a4eb7eb41386111424b117f83fbf8e8fd240")]
 [assembly: System.Reflection.AssemblyProductAttribute("Elgoog.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Elgoog.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

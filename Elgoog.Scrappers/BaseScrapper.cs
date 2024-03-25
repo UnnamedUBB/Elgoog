@@ -18,15 +18,12 @@ public abstract class BaseScrapper : IBaseScrapper
             {
                 throw new Exception("Nieprawdiłowy base url");
             }
-
-            Console.WriteLine(BaseUrl + url);
             
             var web = new HtmlWeb();
             return web.Load(BaseUrl + url);
         }
         catch (HttpRequestException e)
         {
-            Console.WriteLine($"Błąd podczas pobierania strony: {e.Message}");
             return null;
         }
     }

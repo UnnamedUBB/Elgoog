@@ -43,7 +43,7 @@ public abstract class BaseRepository<TModel> : IBaseRepository<TModel> where TMo
         
         if (page is not null && pageSize is not null)
         {
-            var preparedPage = page.Value - 1 < 0 ? 0 : page.Value;
+            var preparedPage = page.Value - 1 < 0 ? 0 : page.Value - 1;
             query = query.Skip(preparedPage * pageSize.Value).Take(pageSize.Value);
         }
 

@@ -18,10 +18,8 @@ public static class ServiceCollectionExtensions
         collection.AddDbContext<ElgoogContext>(x =>
         {
             var connectionString = configuration.GetConnectionString("elgoog");
-            x.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), t =>
-            {
-                t.MigrationsAssembly("Elgoog.DAL");
-            });
+            x.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
+                t => { t.MigrationsAssembly("Elgoog.DAL"); });
         });
 
         return collection;
@@ -46,13 +44,16 @@ public static class ServiceCollectionExtensions
     {
         collection.AddQuartz(x =>
         {
-            x.AddJob<ScrapperJob>(t => t.WithIdentity(ScrapperJob.Key).Build());
-            x.AddTrigger(t =>
-            {
-                t.WithIdentity("scrapper-trigger", "scrapper-triggers")
-                    .ForJob(ScrapperJob.Key);
-            });
+            x.AddJob<ProductsJob>(j => j.WithIdentity(ProductsJob.Key));
+
+            x.AddTrigger(t => t
+                .ForJob(ProductsJob.Key)
+                .WithIdentity("updateProductsTrigger")
+                .StartNow()
+                .WithSimpleSchedule(s => s.WithIntervalInSeconds(60).RepeatForever()));
         });
+
+        collection.AddQuartzHostedService(x => { x.WaitForJobsToComplete = true; });
 
         return collection;
     }

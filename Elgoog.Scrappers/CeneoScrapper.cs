@@ -9,6 +9,29 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
 {
     protected override string BaseUrl => "https://www.ceneo.pl/";
 
+    public async Task<ProductDto?> GetProductAsync(int id)
+    {
+        var document = await GetPageAsync($"/{id}");
+        if (document == null) return null;
+        
+        var name = GetName(document.DocumentNode);
+        var price = GetPrice(document.DocumentNode);
+        var link = await GetReference(document.DocumentNode).ConfigureAwait(false);
+        var image = GetImage(document.DocumentNode);
+        
+        if (name == null || price == null || link == null || image == null)
+            return null;
+
+        return new ProductDto
+        {
+            Id = id,
+            Name = name,
+            Price = (decimal)price,
+            Reference = link,
+            Image = image
+        };
+    }
+    
     public async Task<List<ProductDto>> GetProductsAsync(string filter, int page = 0)
     {
         var document = await GetPageAsync($";szukaj-{filter};0020-30-0-0-{page}.htm").ConfigureAwait(false);

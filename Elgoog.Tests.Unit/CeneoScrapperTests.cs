@@ -1,9 +1,6 @@
 using Elgoog.Scrappers;
-using Elgoog.Scrappers.Dto;
 using Elgoog.Tests.Shared;
 using HtmlAgilityPack;
-using Moq;
-using Xunit.Sdk;
 
 namespace Elgoog.Tests.Unit;
 
@@ -59,10 +56,10 @@ public class CeneoScrapperTests
         var html = "<span class=\"price\"><span class=\"value\">99</span><span class=\"penny\">,00</span></span>";
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
-
+    
         // Act
         var result = TestHelper.InvokePrivateMethod(typeof(CeneoScrapper), "GetPrice", doc.DocumentNode);
-
+    
         // Assert
         Assert.Equal(99.00m, result);
     }
@@ -93,7 +90,6 @@ public class CeneoScrapperTests
 
         // Act
         var result = TestHelper.InvokePrivateMethod(typeof(CeneoScrapper), "GetImage", doc.DocumentNode);
-        Console.WriteLine(result);
         
         // Assert
         Assert.Equal("www.ceneo.pl//image.ceneostatic.pl/data/products/148898746/f-indiana-mtb-x-pulser-1-6-meski-czarno-czerwony-26-2023.jpg", result);

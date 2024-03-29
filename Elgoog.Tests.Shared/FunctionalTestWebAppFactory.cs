@@ -15,6 +15,7 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
         .WithImage("mariadb")
         .WithUsername("root")
         .WithPassword("root")
+        .WithDatabase("elgoog")
         .Build();
     
     public Task InitializeAsync()
@@ -42,7 +43,7 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
                 var connectionString = _dbContainer.GetConnectionString();
                 var serverVersion = ServerVersion.AutoDetect(connectionString);
                 
-                t.UseMySql(serverVersion);
+                t.UseMySql(connectionString, serverVersion);
             });
         });
     }

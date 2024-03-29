@@ -83,7 +83,7 @@ public sealed class CeneoScrapper : BaseScrapper, ICeneoScrapper
         
         if (decimal.TryParse(preparedPrice, out var parsed))
             return parsed;
-
+        
         return null;
     }
 

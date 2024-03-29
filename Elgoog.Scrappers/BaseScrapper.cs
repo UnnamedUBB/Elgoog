@@ -10,7 +10,7 @@ public abstract class BaseScrapper : IBaseScrapper
         get;
     }
     
-    public async Task<HtmlDocument?> GetPageAsync(string url)
+    public Task<HtmlDocument?> GetPageAsync(string url)
     {
         try
         {
@@ -20,7 +20,7 @@ public abstract class BaseScrapper : IBaseScrapper
             }
             
             var web = new HtmlWeb();
-            return web.Load(BaseUrl + url);
+            return web.LoadFromWebAsync(BaseUrl + url);
         }
         catch (HttpRequestException e)
         {

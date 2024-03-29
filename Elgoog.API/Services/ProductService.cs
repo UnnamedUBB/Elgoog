@@ -4,7 +4,7 @@ using Elgoog.DAL;
 using Elgoog.DAL.Models;
 using Elgoog.DAL.Repositories.Interfaces;
 using Elgoog.Scrappers.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Mapster;
 using Quartz.Util;
 
 namespace Elgoog.API.Services;
@@ -20,29 +20,22 @@ public class ProductService : IProductService
         _ceneoScrapper = ceneoScrapper;
     }
 
-    public async Task<PageableList<ProductModel>> GetProductsAsync(int page, int pageSize, decimal minPrice, decimal maxPrice,
+    public async Task<PageableList<ProductModel>> GetProductsAsync(int page, int pageSize, decimal minPrice,
+        decimal maxPrice,
         SortType sortType, string filter)
     {
         var result = await _productRepository.GetAllWithPaginationAsync(
-            x => !filter.IsNullOrWhiteSpace() && x.Name.Contains(filter!) && minPrice <= x.Price && maxPrice >= x.Price, 
-            x => sortType == SortType.LowestPrice ? x.OrderBy(t => t.Price) : x.OrderByDescending(t => t.Price), 
-            page, 
+            x => !filter.IsNullOrWhiteSpace() && x.Name.Contains(filter!) && minPrice <= x.Price && maxPrice >= x.Price,
+            x => sortType == SortType.LowestPrice ? x.OrderBy(t => t.Price) : x.OrderByDescending(t => t.Price),
+            page,
             pageSize
-            );
+        );
 
         if (result.TotalCount == 0 && !filter.IsNullOrWhiteSpace())
         {
             var scrappedData = await _ceneoScrapper.GetProductsAsync(filter!, 0);
-            var preparedScrappedData = scrappedData.Select(x => new ProductModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Price = x.Price,
-                Image = x.Image,
-                Reference = x.Reference,
-                DateModifiedUtc = DateTime.UtcNow
-            }).ToList();
-            
+            var preparedScrappedData = scrappedData.Adapt<List<ProductModel>>();
+
             await _productRepository.AddOrUpdateAsync(preparedScrappedData);
             await _productRepository.SaveAsync();
 
@@ -56,6 +49,7 @@ public class ProductService : IProductService
                 var sortedData = preparedScrappedData.OrderByDescending(x => x.Price).ToList();
                 result.Data = sortedData[..Math.Min(preparedScrappedData.Count(), 19)];
             }
+
             result.TotalCount = Math.Min(preparedScrappedData.Count(), 20);
         }
 

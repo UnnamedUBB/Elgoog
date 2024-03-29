@@ -18,6 +18,6 @@ public class ProductModel : BaseModel, IModified
     public string Image { get; set; }
 
     public string Reference { get; set; }
-    
-    public DateTime DateModifiedUtc { get; set; }
+
+    public DateTime DateModifiedUtc { get; set; } = DateTime.UtcNow;
 }
